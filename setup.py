@@ -5,10 +5,10 @@ from setuptools import setup
 
 
 setup(
-    name="change_this_to_name_of_package",
+    name="secrets_manager",
     version="0.1",
-    description="CREATE A DESCRIPTION",
-    url="https://github.com/CuriBio/CHANGE_THIS_TO_NAME_OF_REPO",
+    description="Managing access to secrets.",
+    url="https://github.com/CuriBio/secrets-manager",
     author="Curi Bio",
     author_email="contact@curibio.com",
     license="MIT",
@@ -25,6 +25,6 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
-        "Topic :: Scientific/Engineering",
+        "Topic :: Security",
     ],
 )
