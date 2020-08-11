@@ -25,7 +25,6 @@ jobs:
           - "macos-latest"
           - "windows-latest"
         python-version:
-            - 3.6
             - 3.7
             - 3.8
         include:
@@ -93,6 +92,8 @@ jobs:
         # only upload coverage from fastest job
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.7
         uses: codecov/codecov-action@v1
+        timeout-minutes: 1   # Tanner (8/11/20): once fundmental issue with codecov timeout is fixed, remove this line and the next
+        continue-on-error: true
         with:
           file: ./coverage.xml
           flags: unittests

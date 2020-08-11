@@ -7,9 +7,6 @@
 # install the current package in editable mode
 # pip install -e .
 
-# to store git credentials:
-# git config credential.helper store
-#  then do a git command, enter credentials, and they should be saved after that
 
 pre-commit==2.4.0 # run 'pre-commit install' initially to install the git hooks
 pytest==5.4.3

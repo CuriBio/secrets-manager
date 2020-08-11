@@ -7,7 +7,7 @@ Transform: "AWS::Serverless-2016-10-31"
 
 # to create: aws cloudformation deploy --stack-name=codebuild-CHANGE_THIS_TO_NAME_OF_PACKAGE-publish-to-pypi --template-file=codebuild_formation.yaml --capabilities CAPABILITY_NAMED_IAM
 
-Description: Perform continuous integration pull request checks on a CodeCommit repository with CodeBuild
+Description: Use CodeBuild to publish Github repos to PyPi using company PyPi credentials
 
 Resources:
   CodeBuildPolicy:
