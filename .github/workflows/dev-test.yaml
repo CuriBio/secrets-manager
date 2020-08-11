@@ -80,9 +80,11 @@ jobs:
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.7
         run: pre-commit run -a
 
+      - name: Create json files for tests
+        run: echo { \"test_aws_root_secret_key\":${{ secrets.TEST_AWS_ROOT_SECRET_KEY }}, \"test_aws_root_access_key\":${{ secrets.TEST_AWS_ROOT_ACCESS_KEY }}, \"test_aws_root_region\":${{ secrets.TEST_AWS_ROOT_REGION }} } > ./tests/secrets.json
+
       - name: Run Tests
         run: pytest -xsvv --cov-report=xml
-
       - name: Confirm Sphinx Docs build correctly
         # only check Sphinx docs build on the fastest job
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.7
