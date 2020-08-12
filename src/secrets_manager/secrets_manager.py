@@ -75,7 +75,7 @@ def generate_resource_prefix_from_deployment_tier(  # pylint: disable=invalid-na
     deployment_tier: str,
 ) -> str:
     """Append the appropriate prefix to a resource name."""
-    if deployment_tier == "production":
+    if deployment_tier in ("prod", "production"):
         return ""
     now = datetime.datetime.utcnow()
     hostname = remove_invalid_resource_name_charaters(socket.gethostname()).lower()
@@ -140,8 +140,12 @@ class Vault:
         return self._deployment_tier
 
     def _validate_and_assign_deployment_tier(self, deployment_tier: str) -> None:
+        if deployment_tier == "testing":
+            deployment_tier = "test"
+        elif deployment_tier == "production":
+            deployment_tier = "prod"
         self._deployment_tier = deployment_tier
-        if deployment_tier in ["test", "testing", "prod", "production"]:
+        if deployment_tier in ["test", "prod"]:
             return
         raise UnrecognizedVaultDeploymentTierError(deployment_tier)
 
