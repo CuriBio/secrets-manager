@@ -76,7 +76,7 @@ def generate_resource_prefix_from_deployment_tier(  # pylint: disable=invalid-na
     return resource_prefix
 
 
-def _get_deployment_tier_prefix(deployment_tier: str) -> str:
+def get_deployment_tier_prefix(deployment_tier: str) -> str:
 
     if deployment_tier in ("test", "testing"):
         return "test_"
@@ -86,7 +86,7 @@ def _get_deployment_tier_prefix(deployment_tier: str) -> str:
 
 
 def _prepend_specific_deployment_tier(stub: str, deployment_tier: str) -> str:
-    return "%s%s" % (_get_deployment_tier_prefix(deployment_tier), stub)
+    return "%s%s" % (get_deployment_tier_prefix(deployment_tier), stub)
 
 
 class Vault:

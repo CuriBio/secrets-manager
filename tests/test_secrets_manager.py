@@ -197,9 +197,7 @@ def test_set_and_get_secret_for_specific_deployment_tier():
 
 def test_get_deployment_tier_prefix__raises_error_for_unknown_tier():
     with pytest.raises(UnrecognizedVaultDeploymentTierError):
-        secrets_manager._get_deployment_tier_prefix(  # pylint: disable=protected-access
-            "fake tier"
-        )
+        secrets_manager.get_deployment_tier_prefix("fake tier")
 
 
 @pytest.mark.parametrize(

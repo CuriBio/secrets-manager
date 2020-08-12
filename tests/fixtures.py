@@ -20,6 +20,8 @@ def fixture_vault_for_param_store():
     ]
     vault = Vault(files_to_search=files_to_search)
     vault.set_internal_secret(AWS_PARAM_STORE_PATH_KEY_NAME, param_store_prefix)
+    vault.set_internal_secret("int_secret", 1)
+    vault.set_internal_secret("float_secret", 1.0)
     session = Session(
         aws_access_key_id=vault.get_secret("aws_ssm_access_key"),
         aws_secret_access_key=vault.get_secret("aws_ssm_secret_key"),
