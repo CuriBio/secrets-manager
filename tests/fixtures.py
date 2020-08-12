@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import inspect
 import os
 
 from boto3.session import Session
@@ -7,8 +6,10 @@ import pytest
 from secrets_manager import AWS_PARAM_STORE_PATH_KEY_NAME
 from secrets_manager import generate_resource_prefix_from_deployment_tier
 from secrets_manager import Vault
+from stdlib_utils import get_current_file_abs_directory
 
-PATH_OF_CURRENT_FILE = os.path.dirname((inspect.stack()[0][1]))
+
+PATH_OF_CURRENT_FILE = get_current_file_abs_directory()
 
 
 @pytest.fixture(scope="function", name="vault_for_param_store")

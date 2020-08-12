@@ -1,3 +1,6 @@
+IAM user must be created before tests will work  in Cloud9 (see iam-formation.yaml).
+test_aws_ssm_region, test_aws_ssm_access_key, and test_aws_ssm_secret_key must be set up as secrets in GitHub before tests will pass in GitHub.
+
 .. image:: https://img.shields.io/pypi/v/secrets-manager.svg
     :target: https://pypi.org/project/secrets-manager/
 

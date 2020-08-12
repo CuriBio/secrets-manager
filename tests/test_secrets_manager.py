@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-import inspect
 import os
 import socket
 from unittest.mock import call
+import warnings
 
 from freezegun import freeze_time
 import pytest
@@ -16,21 +16,32 @@ from secrets_manager import SecretNotFoundInVaultError
 from secrets_manager import secrets_manager
 from secrets_manager import UnrecognizedVaultDeploymentTierError
 from secrets_manager import Vault
+from stdlib_utils import get_current_file_abs_directory
 
 from .fixtures import fixture_ssm_param
 from .fixtures import fixture_vault_for_param_store
 
 __fixtures__ = [fixture_ssm_param, fixture_vault_for_param_store]
 
-PATH_OF_CURRENT_FILE = os.path.dirname((inspect.stack()[0][1]))
+PATH_OF_CURRENT_FILE = get_current_file_abs_directory()
 
 
-def test_vault__unrecognized_deployment_tier_raises_error():
+def test_Vault__unrecognized_deployment_tier_raises_error():
     with pytest.raises(UnrecognizedVaultDeploymentTierError):
         Vault(deployment_tier="crazy")
 
 
-def test_vault__returns_environmental_variable_for_test_mode(mocker):
+def test_Vault__changes_testing_deployment_tier_to_correct_four_letter_abreviation():
+    v = Vault(deployment_tier="testing")
+    assert v.get_deployment_tier() == "test"
+
+
+def test_Vault__changes_production_deployment_tier_to_correct_four_letter_abreviation():
+    v = Vault(deployment_tier="production")
+    assert v.get_deployment_tier() == "prod"
+
+
+def test_Vault__returns_environmental_variable_for_test_mode(mocker):
     v = Vault()
 
     expected = "AOOEETHO"
@@ -42,7 +53,7 @@ def test_vault__returns_environmental_variable_for_test_mode(mocker):
     assert actual == expected
 
 
-def test_vault__returns_environmental_variable_for_production_mode(mocker):
+def test_Vault__returns_environmental_variable_for_production_mode(mocker):
     v = Vault(deployment_tier="prod")
 
     expected = "hoet33293"
@@ -54,14 +65,14 @@ def test_vault__returns_environmental_variable_for_production_mode(mocker):
     assert actual == expected
 
 
-def test_vault__raises_error_if_secret_not_found(mocker):
+def test_Vault__raises_error_if_secret_not_found(mocker):
     v = Vault()
     mocker.patch("builtins.open", mocker.mock_open(read_data="{}"))
     with pytest.raises(SecretNotFoundInVaultError):
         v.get_secret("crazy_thing")
 
 
-def test_vault__returns_value_from_json_when_not_in_environ(mocker):
+def test_Vault__returns_value_from_json_when_not_in_environ(mocker):
     v = Vault(files_to_search=["blah.json"])
 
     expected = "blah218"
@@ -75,7 +86,7 @@ def test_vault__returns_value_from_json_when_not_in_environ(mocker):
     assert actual == expected
 
 
-def test_vault__returns_value_from_json_when_value_also_in_environment_if_json_specified_first(
+def test_Vault__returns_value_from_json_when_value_also_in_environment_if_json_specified_first(
     mocker,
 ):
     v = Vault(search_environment_first=False, files_to_search=["blad.json"])
@@ -92,7 +103,7 @@ def test_vault__returns_value_from_json_when_value_also_in_environment_if_json_s
     assert actual == expected
 
 
-def test_vault__returns_value_from_environment_if_json_specified_first(mocker):
+def test_Vault__returns_value_from_environment_if_json_specified_first(mocker):
     v = Vault(search_environment_first=False, files_to_search=["blad.json"])
 
     expected = "3306"
@@ -105,7 +116,7 @@ def test_vault__returns_value_from_environment_if_json_specified_first(mocker):
     m.assert_called_once_with("blad.json")
 
 
-def test_vault__opens_all_json_files_specified(mocker):
+def test_Vault__opens_all_json_files_specified(mocker):
     v = Vault(files_to_search=["file1.json", "file2.json"])
     mocker.patch("os.path.exists", autospec=True, return_value=True)
     m = mocker.patch.object(secrets_manager, "load_json_file", return_value={})
@@ -114,7 +125,7 @@ def test_vault__opens_all_json_files_specified(mocker):
     m.assert_has_calls([call("file1.json"), call("file2.json")])
 
 
-def test_vault__retrieves_value_from_internal_store__even_when_present_in_environment(
+def test_Vault__retrieves_value_from_internal_store__even_when_present_in_environment(
     mocker,
 ):
     v = Vault()
@@ -298,20 +309,37 @@ def test_get_secret__works_with_float_secret(vault_for_param_store):
     assert isinstance(int_secret, float) is True
 
 
-def test_Vault__raises_warning_when_getting_and_setting_secret_with_kebab_case_name():
+def test_Vault__raises_warning_when_setting_with_kebab_case_name():
     v = Vault()
     with pytest.warns(KebabCaseSecretNameWarning, match="kebab_name"):
         v.set_internal_secret("kebab-name", "dummy_val")
+
+
+def test_Vault__raises_warning_when_getting_with_kebab_case_name():
+    v = Vault()
+    warnings.simplefilter("ignore", category=KebabCaseSecretNameWarning)
+    v.set_internal_secret("kebab-name", "dummy_val")
+    warnings.simplefilter("default", category=KebabCaseSecretNameWarning)
     with pytest.warns(KebabCaseSecretNameWarning, match="kebab_name"):
         v.get_secret("kebab-name")
 
 
-def test_Vault__raises_warning_when_getting_and_setting_secret_for_specific_deployment_tier_with_kebab_case_name():
+def test_Vault__raises_warning_when_getting_secret_for_specific_deployment_tier_with_kebab_case_name():
     v = Vault()
     deployment_tier = "test"
     with pytest.warns(KebabCaseSecretNameWarning, match="longer_kebab_name"):
         v.set_internal_secret_for_specific_deployment_tier(
             "longer-kebab-name", "dummy_val", deployment_tier
         )
+
+
+def test_Vault__raises_warning_when_setting_secret_for_specific_deployment_tier_with_kebab_case_name():
+    v = Vault()
+    deployment_tier = "test"
+    warnings.simplefilter("ignore", category=KebabCaseSecretNameWarning)
+    v.set_internal_secret_for_specific_deployment_tier(
+        "longer-kebab-name", "dummy_val", deployment_tier
+    )
+    warnings.simplefilter("default", category=KebabCaseSecretNameWarning)
     with pytest.warns(KebabCaseSecretNameWarning, match="longer_kebab_name"):
         v.get_secret_for_specific_deployment_tier("longer-kebab-name", deployment_tier)
