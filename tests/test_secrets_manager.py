@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import inspect
 import os
 import socket
 from unittest.mock import call
@@ -17,13 +16,14 @@ from secrets_manager import SecretNotFoundInVaultError
 from secrets_manager import secrets_manager
 from secrets_manager import UnrecognizedVaultDeploymentTierError
 from secrets_manager import Vault
+from stdlib_utils import get_current_file_abs_directory
 
 from .fixtures import fixture_ssm_param
 from .fixtures import fixture_vault_for_param_store
 
 __fixtures__ = [fixture_ssm_param, fixture_vault_for_param_store]
 
-PATH_OF_CURRENT_FILE = os.path.dirname((inspect.stack()[0][1]))
+PATH_OF_CURRENT_FILE = get_current_file_abs_directory()
 
 
 def test_vault__unrecognized_deployment_tier_raises_error():
