@@ -80,9 +80,6 @@ jobs:
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.7
         run: pre-commit run -a
 
-      # - name: Create json files for tests
-      #   run: echo { \"test_aws_ssm_secret_key\":\"${{ secrets.TEST_AWS_SSM_SECRET_KEY }}\", \"test_aws_ssm_access_key\":\"${{ secrets.TEST_AWS_SSM_ACCESS_KEY }}\", \"test_aws_ssm_region\":\"${{ secrets.TEST_AWS_SSM_REGION }}\" } > ./tests/secrets.json
-
       - name: Run Tests
         env:
           test_aws_ssm_access_key: ${{ secrets.TEST_AWS_SSM_ACCESS_KEY }}

@@ -285,3 +285,15 @@ def test_get_secret__raises_error_if_secret_not_in_parameter_store(
     vault, _ = vault_for_param_store
     with pytest.raises(SecretNotFoundInVaultError, match="test_blah891"):
         vault.get_secret("blah891")
+
+
+def test_get_secret__works_with_int_secret(vault_for_param_store):
+    vault, _ = vault_for_param_store
+    int_secret = vault.get_secret("int_secret")
+    assert isinstance(int_secret, int) is True
+
+
+def test_get_secret__works_with_float_secret(vault_for_param_store):
+    vault, _ = vault_for_param_store
+    int_secret = vault.get_secret("float_secret")
+    assert isinstance(int_secret, float) is True
