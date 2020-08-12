@@ -78,10 +78,10 @@ def generate_resource_prefix_from_deployment_tier(  # pylint: disable=invalid-na
 
 def _get_deployment_tier_prefix(deployment_tier: str) -> str:
 
-    if deployment_tier == "testing":
-        return "testing_"
-    if deployment_tier == "production":
-        return "production_"
+    if deployment_tier in ("test", "testing"):
+        return "test_"
+    if deployment_tier in ("prod", "production"):
+        return "prod_"
     raise UnrecognizedVaultDeploymentTierError(deployment_tier)
 
 
@@ -101,7 +101,7 @@ class Vault:
 
     def __init__(
         self,
-        deployment_tier: str = "testing",
+        deployment_tier: str = "test",
         search_environment_first: bool = True,
         files_to_search: Optional[List[str]] = None,
     ):
@@ -131,7 +131,7 @@ class Vault:
 
     def _validate_and_assign_deployment_tier(self, deployment_tier: str) -> None:
         self._deployment_tier = deployment_tier
-        if deployment_tier in ["testing", "production"]:
+        if deployment_tier in ["test", "testing", "prod", "production"]:
             return
         raise UnrecognizedVaultDeploymentTierError(deployment_tier)
 

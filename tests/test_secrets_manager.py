@@ -35,19 +35,19 @@ def test_vault__returns_environmental_variable_for_test_mode(mocker):
     expected = "AOOEETHO"
     secret_name = "aws_s3_access_key"
 
-    mocker.patch.dict(os.environ, {"testing_%s" % secret_name: expected}, clear=True)
+    mocker.patch.dict(os.environ, {"test_%s" % secret_name: expected}, clear=True)
     actual = v.get_secret(secret_name)
 
     assert actual == expected
 
 
 def test_vault__returns_environmental_variable_for_production_mode(mocker):
-    v = Vault(deployment_tier="production")
+    v = Vault(deployment_tier="prod")
 
     expected = "hoet33293"
     secret_name = "mysql_db_name"
     mocker.patch("os.path.exists", autospec=True, return_value=True)
-    mocker.patch.dict(os.environ, {"production_%s" % secret_name: expected}, clear=True)
+    mocker.patch.dict(os.environ, {"prod_%s" % secret_name: expected}, clear=True)
     actual = v.get_secret(secret_name)
 
     assert actual == expected
@@ -67,7 +67,7 @@ def test_vault__returns_value_from_json_when_not_in_environ(mocker):
     secret_name = "sql_user"
     mocker.patch(
         "builtins.open",
-        mocker.mock_open(read_data='{"testing_%s":"%s"}' % (secret_name, expected)),
+        mocker.mock_open(read_data='{"test_%s":"%s"}' % (secret_name, expected)),
     )
     mocker.patch("os.path.exists", autospec=True, return_value=True)
     actual = v.get_secret(secret_name)
@@ -83,12 +83,10 @@ def test_vault__returns_value_from_json_when_value_also_in_environment_if_json_s
     secret_name = "sql_password"
     mocker.patch(
         "builtins.open",
-        mocker.mock_open(read_data='{"testing_%s":"%s"}' % (secret_name, expected)),
+        mocker.mock_open(read_data='{"test_%s":"%s"}' % (secret_name, expected)),
     )
     mocker.patch("os.path.exists", autospec=True, return_value=True)
-    mocker.patch.dict(
-        os.environ, {"testing_%s" % secret_name: "not expected"}, clear=True
-    )
+    mocker.patch.dict(os.environ, {"test_%s" % secret_name: "not expected"}, clear=True)
     actual = v.get_secret(secret_name)
     assert actual == expected
 
@@ -100,7 +98,7 @@ def test_vault__returns_value_from_environment_if_json_specified_first(mocker):
     secret_name = "sql_port"
     m = mocker.patch.object(secrets_manager, "load_json_file", return_value={})
     mocker.patch("os.path.exists", autospec=True, return_value=True)
-    mocker.patch.dict(os.environ, {"testing_%s" % secret_name: expected}, clear=True)
+    mocker.patch.dict(os.environ, {"test_%s" % secret_name: expected}, clear=True)
     actual = v.get_secret(secret_name)
     assert actual == expected
     m.assert_called_once_with("blad.json")
@@ -121,9 +119,7 @@ def test_vault__retrieves_value_from_internal_store__even_when_present_in_enviro
     v = Vault()
     secret_name = "very_secret"
     expected = "correct secret"
-    mocker.patch.dict(
-        os.environ, {"testing_%s" % secret_name: "not correct"}, clear=True
-    )
+    mocker.patch.dict(os.environ, {"test_%s" % secret_name: "not correct"}, clear=True)
 
     v.set_internal_secret("%s" % secret_name, expected)
 
@@ -166,13 +162,13 @@ def test_remove_invalid_resource_name_charaters__removes_apostrophes_and_replace
     [
         (
             "eli's work",
-            "testing",
+            "test",
             "zztest_elis__190524110922_",
             "remove apostrophe and replace space and truncate",
         ),
         (
             "Eli",
-            "testing",
+            "test",
             "zztest_eli_190524110922_",
             "converts to lower case and handles name shorter than truncation limit",
         ),
@@ -189,8 +185,8 @@ def test_generate_resource_prefix_from_deployment_tier(
 
 
 def test_set_and_get_secret_for_specific_deployment_tier():
-    v = Vault(deployment_tier="testing")
-    v.set_internal_secret("mykey", "testing_value")
+    v = Vault(deployment_tier="test")
+    v.set_internal_secret("mykey", "test_value")
     v.set_internal_secret_for_specific_deployment_tier(
         "mykey", "prod_value", "production"
     )
@@ -269,7 +265,7 @@ def test_search_aws_param_store_for_secret__raises_error_if_secret_not_in_parame
 ):
     vault, _ = vault_for_param_store
     with pytest.raises(SecretNotFoundInAwsParameterStoreError, match="blah8"):
-        vault.search_aws_param_store_for_secret("testing_blah8")
+        vault.search_aws_param_store_for_secret("test_blah8")
 
 
 def test_search_aws_param_store_for_secret__reraises_permission_error_that_could_occur_during_boto_call(
@@ -287,5 +283,5 @@ def test_get_secret__raises_error_if_secret_not_in_parameter_store(
     vault_for_param_store,
 ):
     vault, _ = vault_for_param_store
-    with pytest.raises(SecretNotFoundInVaultError, match="testing_blah891"):
+    with pytest.raises(SecretNotFoundInVaultError, match="test_blah891"):
         vault.get_secret("blah891")

@@ -13,13 +13,13 @@ PATH_OF_CURRENT_FILE = os.path.dirname((inspect.stack()[0][1]))
 
 @pytest.fixture(scope="function", name="vault_for_param_store")
 def fixture_vault_for_param_store():
-    param_store_prefix = "/CodeBuild/secrets_manager/"
+    param_store_prefix = "/CodeBuild/secrets-manager/"
     vault = Vault(files_to_search=[os.path.join(PATH_OF_CURRENT_FILE, "secrets.json")])
     vault.set_internal_secret(AWS_PARAM_STORE_PATH_KEY_NAME, param_store_prefix)
     session = Session(
-        aws_access_key_id=vault.get_secret("aws_root_access_key"),
-        aws_secret_access_key=vault.get_secret("aws_root_secret_key"),
-        region_name=vault.get_secret("aws_root_region"),
+        aws_access_key_id=vault.get_secret("aws_ssm_access_key"),
+        aws_secret_access_key=vault.get_secret("aws_ssm_secret_key"),
+        region_name=vault.get_secret("aws_ssm_region"),
     )
     vault.set_boto_session(session)
     yield vault, param_store_prefix
@@ -29,11 +29,11 @@ def fixture_vault_for_param_store():
 def fixture_ssm_param(vault_for_param_store):
     """Create this as a fixture so it is deleted even if test fails."""
     expected_secret_value = "my-encrypted-parameter"
-    prefix = generate_resource_prefix_from_deployment_tier("testing")
+    prefix = generate_resource_prefix_from_deployment_tier("test")
     secret_name = f"{prefix}ssm_param"
     vault, param_store_prefix = vault_for_param_store
     # param_store_prefix = "/CodeBuild/secrets_manager/"
-    param_name = f"{param_store_prefix}testing_{secret_name}"
+    param_name = f"{param_store_prefix}test_{secret_name}"
 
     session = vault.get_boto_session()
     ssm_client = session.client("ssm")
