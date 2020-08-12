@@ -24,7 +24,7 @@ from .warnings import KebabCaseSecretNameWarning
 def _check_for_kebab_case(secret_name: str) -> None:
     if "-" in secret_name:
         warnings.warn(
-            f"The secret '{secret_name}' should not be kebab case. Use {str(secret_name).replace('-', '_')} instead",
+            f"The secret '{secret_name}' should not be kebab case as environmental variables can only be snake case. Use {str(secret_name).replace('-', '_')} instead",
             KebabCaseSecretNameWarning,
         )
 

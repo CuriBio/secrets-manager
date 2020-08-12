@@ -3,6 +3,7 @@ import inspect
 import os
 import socket
 from unittest.mock import call
+import warnings
 
 from freezegun import freeze_time
 import pytest
@@ -298,20 +299,37 @@ def test_get_secret__works_with_float_secret(vault_for_param_store):
     assert isinstance(int_secret, float) is True
 
 
-def test_Vault__raises_warning_when_getting_and_setting_secret_with_kebab_case_name():
+def test_Vault__raises_warning_when_setting_with_kebab_case_name():
     v = Vault()
     with pytest.warns(KebabCaseSecretNameWarning, match="kebab_name"):
         v.set_internal_secret("kebab-name", "dummy_val")
+
+
+def test_Vault__raises_warning_when_getting_with_kebab_case_name():
+    v = Vault()
+    warnings.simplefilter("ignore", category=KebabCaseSecretNameWarning)
+    v.set_internal_secret("kebab-name", "dummy_val")
+    warnings.simplefilter("default", category=KebabCaseSecretNameWarning)
     with pytest.warns(KebabCaseSecretNameWarning, match="kebab_name"):
         v.get_secret("kebab-name")
 
 
-def test_Vault__raises_warning_when_getting_and_setting_secret_for_specific_deployment_tier_with_kebab_case_name():
+def test_Vault__raises_warning_when_getting_secret_for_specific_deployment_tier_with_kebab_case_name():
     v = Vault()
     deployment_tier = "test"
     with pytest.warns(KebabCaseSecretNameWarning, match="longer_kebab_name"):
         v.set_internal_secret_for_specific_deployment_tier(
             "longer-kebab-name", "dummy_val", deployment_tier
         )
+
+
+def test_Vault__raises_warning_when_setting_secret_for_specific_deployment_tier_with_kebab_case_name():
+    v = Vault()
+    deployment_tier = "test"
+    warnings.simplefilter("ignore", category=KebabCaseSecretNameWarning)
+    v.set_internal_secret_for_specific_deployment_tier(
+        "longer-kebab-name", "dummy_val", deployment_tier
+    )
+    warnings.simplefilter("default", category=KebabCaseSecretNameWarning)
     with pytest.warns(KebabCaseSecretNameWarning, match="longer_kebab_name"):
         v.get_secret_for_specific_deployment_tier("longer-kebab-name", deployment_tier)
