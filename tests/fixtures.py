@@ -14,11 +14,7 @@ PATH_OF_CURRENT_FILE = os.path.dirname((inspect.stack()[0][1]))
 @pytest.fixture(scope="function", name="vault_for_param_store")
 def fixture_vault_for_param_store():
     param_store_prefix = "/CodeBuild/secrets-manager/"
-    files_to_search = [
-        os.path.join(PATH_OF_CURRENT_FILE, "secrets.json"),
-        os.path.join(PATH_OF_CURRENT_FILE, "test_secrets.json"),
-    ]
-    vault = Vault(files_to_search=files_to_search)
+    vault = Vault(files_to_search=[os.path.join(PATH_OF_CURRENT_FILE, "secrets.json")])
     vault.set_internal_secret(AWS_PARAM_STORE_PATH_KEY_NAME, param_store_prefix)
     vault.set_internal_secret("int_secret", 1)
     vault.set_internal_secret("float_secret", 1.0)

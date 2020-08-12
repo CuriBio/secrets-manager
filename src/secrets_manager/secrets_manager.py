@@ -9,6 +9,7 @@ from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Union
+import warnings
 
 from .constants import AWS_PARAM_STORE_PATH_KEY_NAME
 from .exceptions import NoAwsParameterStorePathError
@@ -17,6 +18,15 @@ from .exceptions import SecretNotFoundInAwsParameterStoreError
 from .exceptions import SecretNotFoundInLocalSourcesError
 from .exceptions import SecretNotFoundInVaultError
 from .exceptions import UnrecognizedVaultDeploymentTierError
+from .warnings import KebabCaseSecretNameWarning
+
+
+def _check_for_kebab_case(secret_name: str) -> None:
+    if "-" in secret_name:
+        warnings.warn(
+            f"The secret '{secret_name}' should not be kebab case. Use {str(secret_name).replace('-', '_')} instead",
+            KebabCaseSecretNameWarning,
+        )
 
 
 def _convert_special_annotations(value: str) -> str:
@@ -152,6 +162,7 @@ class Vault:
         secret_value: Union[str, int, float],
         prepend_deployment_tier: bool = True,
     ) -> None:
+        _check_for_kebab_case(secret_name)
         if prepend_deployment_tier:
             secret_name = self._prepend_deployment_tier(secret_name)
         self._internal_secrets[secret_name] = secret_value
@@ -247,6 +258,7 @@ class Vault:
         self, name: str, deployment_tier: str
     ) -> Union[str, int, float]:
         """Obtain the secret for a specific deployment tier."""
+        _check_for_kebab_case(name)
         full_secret_name = _prepend_specific_deployment_tier(name, deployment_tier)
 
         value = self._search_through_sources_and_find_secret(full_secret_name)

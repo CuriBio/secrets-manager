@@ -7,6 +7,7 @@ from unittest.mock import call
 from freezegun import freeze_time
 import pytest
 from secrets_manager import generate_resource_prefix_from_deployment_tier
+from secrets_manager import KebabCaseSecretNameWarning
 from secrets_manager import NoAwsParameterStorePathError
 from secrets_manager import NoConnectedBotoSessionError
 from secrets_manager import remove_invalid_resource_name_charaters
@@ -295,3 +296,22 @@ def test_get_secret__works_with_float_secret(vault_for_param_store):
     vault, _ = vault_for_param_store
     int_secret = vault.get_secret("float_secret")
     assert isinstance(int_secret, float) is True
+
+
+def test_Vault__raises_warning_when_getting_and_setting_secret_with_kebab_case_name():
+    v = Vault()
+    with pytest.warns(KebabCaseSecretNameWarning, match="kebab_name"):
+        v.set_internal_secret("kebab-name", "dummy_val")
+    with pytest.warns(KebabCaseSecretNameWarning, match="kebab_name"):
+        v.get_secret("kebab-name")
+
+
+def test_Vault__raises_warning_when_getting_and_setting_secret_for_specific_deployment_tier_with_kebab_case_name():
+    v = Vault()
+    deployment_tier = "test"
+    with pytest.warns(KebabCaseSecretNameWarning, match="longer_kebab_name"):
+        v.set_internal_secret_for_specific_deployment_tier(
+            "longer-kebab-name", "dummy_val", deployment_tier
+        )
+    with pytest.warns(KebabCaseSecretNameWarning, match="longer_kebab_name"):
+        v.get_secret_for_specific_deployment_tier("longer-kebab-name", deployment_tier)
