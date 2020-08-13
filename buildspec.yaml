@@ -6,6 +6,9 @@ env:
   parameter-store:
     TWINE_USERNAME: /CodeBuild/general/pypi_username
     TWINE_PASSWORD: /CodeBuild/general/pypi_password
+    test_aws_ssm_region: /CodeBuild/secrets-manager/aws_ssm_region
+    test_aws_ssm_access_key: /CodeBuild/secrets-manager/aws_ssm_access_key
+    test_aws_ssm_secret_key: /CodeBuild/secrets-manager/aws_ssm_secret_key
 
 phases:
   install:
