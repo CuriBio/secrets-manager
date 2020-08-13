@@ -30,6 +30,11 @@ Resources:
                   - - "arn:aws:ssm:*:*:parameter/CodeBuild"
                     - "general"
                     - "*"
+              - Fn::Join:
+                  - "/"
+                  - - "arn:aws:ssm:*:*:parameter/CodeBuild"
+                    - "secrets-manager"
+                    - "*"
           - Action:
               - kms:Decrypt
             Effect: Allow
