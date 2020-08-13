@@ -25,7 +25,6 @@ jobs:
           - "macos-latest"
           - "windows-latest"
         python-version:
-            - 3.6
             - 3.7
             - 3.8
         include:
@@ -82,8 +81,11 @@ jobs:
         run: pre-commit run -a
 
       - name: Run Tests
+        env:
+          test_aws_ssm_access_key: ${{ secrets.TEST_AWS_SSM_ACCESS_KEY }}
+          test_aws_ssm_secret_key: ${{ secrets.TEST_AWS_SSM_SECRET_KEY }}
+          test_aws_ssm_region: ${{ secrets.TEST_AWS_SSM_REGION }}
         run: pytest -xsvv --cov-report=xml
-
       - name: Confirm Sphinx Docs build correctly
         # only check Sphinx docs build on the fastest job
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.7
@@ -93,6 +95,8 @@ jobs:
         # only upload coverage from fastest job
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.7
         uses: codecov/codecov-action@v1
+        timeout-minutes: 1   # Tanner (8/11/20): once fundmental issue with codecov timeout is fixed, remove this line and the next
+        continue-on-error: true
         with:
           file: ./coverage.xml
           flags: unittests
