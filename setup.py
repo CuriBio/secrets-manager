@@ -6,7 +6,7 @@ from setuptools import setup
 
 setup(
     name="secrets_manager",
-    version="0.1",
+    version="0.4",
     description="Managing access to secrets.",
     url="https://github.com/CuriBio/secrets-manager",
     author="Curi Bio",
