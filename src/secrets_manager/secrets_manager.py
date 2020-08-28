@@ -224,8 +224,8 @@ class Vault:
             param_store_prefix = self._search_through_local_sources_and_find_secret(
                 param_store_prefix_secret_name
             )
-        except SecretNotFoundInLocalSourcesError:
-            raise NoAwsParameterStorePathError(complete_secret_name)
+        except SecretNotFoundInLocalSourcesError as e:
+            raise NoAwsParameterStorePathError(complete_secret_name) from e
 
         full_aws_path = f"{param_store_prefix}{complete_secret_name}"
 
@@ -234,7 +234,9 @@ class Vault:
             response = ssm_client.get_parameter(Name=full_aws_path, WithDecryption=True)
         except Exception as e:
             if str(type(e)) == "<class 'botocore.errorfactory.ParameterNotFound'>":
-                raise SecretNotFoundInAwsParameterStoreError(complete_secret_name)
+                raise SecretNotFoundInAwsParameterStoreError(
+                    complete_secret_name
+                ) from e
             raise e
         response_param_val: Union[str, int, float] = response["Parameter"]["Value"]
         return response_param_val
