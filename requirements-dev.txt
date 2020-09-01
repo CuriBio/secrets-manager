@@ -8,14 +8,14 @@
 # pip install -e .
 
 
-pre-commit==2.4.0 # run 'pre-commit install' initially to install the git hooks
+pre-commit==2.7.1 # run 'pre-commit install' initially to install the git hooks
 pytest==6.0.1
 pytest-cov==2.10.0
 pytest-randomly==3.4.0
 sphinx==3.1.2
 pylint==2.6.0
 pytest-pylint==0.17.0
-zest.releaser[recommended]==6.20.1
+zest.releaser[recommended]==6.21.1
 freezegun==0.3.15
 boto3==1.14.51
 docutils==0.15 # Tanner (8/11/20) boto3 requires docutils<0.16
