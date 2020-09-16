@@ -17,7 +17,6 @@ pytest-pylint==0.17.0
 zest.releaser[recommended]==6.22.0
 freezegun==0.3.15
 boto3==1.14.51
-docutils==0.16 # Tanner (8/11/20) boto3 requires docutils<0.16
 stdlib-utils==0.3.0
 
 pytest-mock==3.3.1
