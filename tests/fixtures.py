@@ -27,13 +27,13 @@ def fixture_vault_for_param_store():
     vault.set_boto_session(session)
     yield vault, param_store_prefix
 
-
+import datetime
 @pytest.fixture(scope="function", name="ssm_param")
 def fixture_ssm_param(vault_for_param_store):
     """Create this as a fixture so it is deleted even if test fails."""
     expected_secret_value = "my-encrypted-parameter"
     prefix = generate_resource_prefix_from_deployment_tier("test")
-    secret_name = f"{prefix}ssm_param"
+    secret_name = f"{prefix}ssm_param_{datetime.datetime.utcnow().strftime('%y%m%d%H%M%S%f')}" # add a timestamp to avoid name conflicts when running parallel builds in CI
     vault, param_store_prefix = vault_for_param_store
     # param_store_prefix = "/CodeBuild/secrets_manager/"
     param_name = f"{param_store_prefix}test_{secret_name}"

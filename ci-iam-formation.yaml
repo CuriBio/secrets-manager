@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: "AWS::Serverless-2016-10-31"
 
-# to create: aws cloudformation deploy --stack-name=codebuild-secrets-manager-iam-test-user --template-file=iam-formation.yaml --capabilities CAPABILITY_IAM
+# to create: aws cloudformation deploy --stack-name=github-ci-iam-user--secrets-manager --template-file=ci-iam-formation.yaml --capabilities CAPABILITY_IAM
 
 Description: Create an IAM user with extremely limited permissions that can be used to test access to the parameter store
 
@@ -23,7 +23,7 @@ Resources:
                   - kms:Decrypt
                 Effect: Allow
                 Resource: "arn:aws:kms:*:*:alias/aws/ssm"
-          PolicyName: "read-write-access-to-CodeBuild-secrets-manager-test-parameters"
+          PolicyName: "github-ci-access--secrets-manager"
   TestingUserAccessKey:
     Type: AWS::IAM::AccessKey
     Properties:
