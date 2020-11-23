@@ -8,7 +8,7 @@
 # pip install -e .
 
 
-pre-commit==2.8.2 # run 'pre-commit install' initially to install the git hooks
+pre-commit==2.9.0 # run 'pre-commit install' initially to install the git hooks
 pytest==6.1.2
 pytest-cov==2.10.1
 pytest-randomly==3.4.1
@@ -17,7 +17,6 @@ pytest-pylint==0.18.0
 zest.releaser[recommended]==6.22.1
 freezegun==1.0.0
 boto3==1.16.23
-docutils==0.15.2 # Tanner (8/11/20) botocore requires docutils<0.16
 stdlib-utils==0.3.6
 
 pytest-mock==3.3.1
