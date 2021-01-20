@@ -16,7 +16,7 @@ pylint==2.6.0
 pytest-pylint==0.18.0
 zest.releaser[recommended]==6.22.1
 freezegun==1.0.0
-boto3==1.16.56
+boto3==1.16.57
 stdlib-utils==0.3.11
 
 pytest-mock==3.5.1
