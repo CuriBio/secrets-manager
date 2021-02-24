@@ -145,5 +145,4 @@ jobs:
           fail_ci_if_error: true
 
       - name: Run prerelease to check packaging compatibilty
-        if: matrix.IS_FASTEST_JOB == true
         run: python prerelease.py --no-input
