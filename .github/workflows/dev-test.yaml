@@ -34,7 +34,7 @@ jobs:
         include:
           # only enable coverage on the fastest job
           - os: "ubuntu-20.04"
-            python-version: "3.8" # Eli (11/12/20): pylint doesn't yet support Python 3.9, so can't run pre-commit yet
+            python-version: "3.9"
             IS_FASTEST_JOB: true
 
     name: Python ${{ matrix.python-version }} on ${{ matrix.os }}
@@ -145,5 +145,4 @@ jobs:
           fail_ci_if_error: true
 
       - name: Run prerelease to check packaging compatibilty
-        if: matrix.IS_FASTEST_JOB == true
         run: python prerelease.py --no-input
